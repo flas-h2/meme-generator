@@ -81,18 +81,25 @@
               <label for="imgUrl" class="form-label">Image URL</label>
               <input
                 id="imgUrl"
+                name="imgUrl"
                 class="form-control"
                 placeholder="https://example.com/cat.jpg"
               />
             </div>
             <div class="col-12 col-md-3">
               <label for="topText" class="form-label">Top Text</label>
-              <input id="topText" class="form-control" placeholder="TOP TEXT" />
+              <input
+                id="topText"
+                name="topText"
+                class="form-control"
+                placeholder="TOP TEXT"
+              />
             </div>
             <div class="col-12 col-md-3">
               <label for="bottomText" class="form-label">Bottom Text</label>
               <input
                 id="bottomText"
+                name="bottomText"
                 class="form-control"
                 placeholder="BOTTOM TEXT"
               />
@@ -115,16 +122,38 @@
       // --- DOM references (IDs) ---
 
       const memeForm = document.getElementById("memeForm"); // Select this element by ID (memeForm)
-      const imgUrl = document.querySelector("imgUrl"); // Select this element with querySelector (imgUrl)
-      const topText = document.querySelectorAll("topText"); // Select this element with querySelectorAll and then accessing the first element (topText);
+      const imgUrl = document.querySelector("#imgUrl"); // Select this element with querySelector (imgUrl)
+      const topText = document.querySelectorAll("#topText"); // Select this element with querySelectorAll and then accessing the first element (topText);
       const bottomText = document.getElementById("bottomText"); // Select this element by ID (bottomText);
-      const formMsg = document.querySelector("formMsg"); // Select this element with querySelector (formMsg);
-      const gallery = document.getElementsByClassName("gallery-div"); // Select this element by class name and selecting the first element (gallery-div)
+      const formMsg = document.querySelector("#formMsg"); // Select this element with querySelector (formMsg);
+      const gallery = document.getElementsByClassName("gallery-div")[0]; // Select this element by class name and selecting the first element (gallery-div)
       /**
        * makeMemeCard
        * Creates and returns a Bootstrap column containing a meme card.
        * Inputs are already-validated strings.
        */
+
+      memeForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const fData = new FormData(memeForm);
+        let newUrl = fData.get("imgUrl").trim();
+        let newTop = fData.get("topText").trim();
+        let newBottom = fData.get("bottomText").trim();
+
+        console.log(typeof newUrl);
+        if (!newUrl) {
+          formMsg.innerHTML = "Provide a link.";
+          formMsg.classList.remove("text-success");
+          formMsg.classList.add("text-danger");
+        } else {
+          formMsg.innerHTML = "Success!";
+          formMsg.classList.remove("text-danger");
+          formMsg.classList.add("text-success");
+          const memeCard = makeMemeCard(newUrl, newTop, newBottom);
+          gallery.prepend(memeCard);
+          memeForm.reset();
+        }
+      });
 
       function makeMemeCard(url, top, bottom) {
         const col = document.createElement("div");
